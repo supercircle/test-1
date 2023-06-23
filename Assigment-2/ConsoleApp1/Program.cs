@@ -1,4 +1,6 @@
-﻿class Program
+﻿using System;
+
+class Program
 {
     static void Main()
     {
@@ -8,7 +10,6 @@
         {
             try
             {
-                Console.WriteLine("Welcome to Stoney Gravel Pit!\n\n");
                 Console.Write("Enter the weight of gravel in pounds: ");
                 int weight = Convert.ToInt32(Console.ReadLine());
 
@@ -16,7 +17,7 @@
 
                 Console.Write("Do you require delivery? (Y/N): ");
                 string deliveryChoice = Console.ReadLine();
-                bool requireDelivery = (deliveryChoice == "y");
+                bool requireDelivery = (deliveryChoice == "Y" || deliveryChoice == "y");
 
                 double deliveryCharge = requireDelivery ? CalculateDeliveryCharge(weight, pricePerPound) : 0;
                 double subtotal = (weight * pricePerPound) + deliveryCharge;
@@ -24,15 +25,15 @@
                 double total = subtotal + gst;
 
                 Console.WriteLine();
-                Console.WriteLine("Subtotal: $", subtotal);
+                Console.WriteLine("Subtotal: {0:C}", subtotal);
 
                 if (requireDelivery)
                 {
                     Console.WriteLine("Delivery: {0:C} {1}", deliveryCharge, GetDeliveryLabel(weight));
                 }
 
-                Console.WriteLine("GST: $" + gst.ToString("F2"));
-                Console.WriteLine("Total: $" + total.ToString("F2"));
+                Console.WriteLine("GST: {0:C}", gst);
+                Console.WriteLine("Total: {0:C}", total);
                 Console.WriteLine();
 
                 Console.Write("Continue shopping? (Y/N): ");
@@ -41,10 +42,63 @@
                 continueShopping = (choice == "Y" || choice == "y");
                 Console.WriteLine();
             }
-            catch (Exception)
+            catch (FormatException)
             {
                 Console.WriteLine("Invalid input. Please enter a valid integer.");
+                Console.WriteLine();
             }
+        }
+    }
+
+    static double CalculatePricePerPound(int weight)
+    {
+        if (weight < 1000)
+        {
+            return 0.55;
+        }
+        else if (weight <= 2000)
+        {
+            return 0.45;
+        }
+        else if (weight <= 3000)
+        {
+            return 0.35;
+        }
+        else if (weight <= 4000)
+        {
+            return 0.25;
+        }
+        else if (weight <= 5000)
+        {
+            return 0.15;
+        }
+        else
+        {
+            return 0.10;
+        }
+    }
+
+    static double CalculateDeliveryCharge(int weight, double pricePerPound)
+    {
+        if (weight > 4800)
+        {
+            return 0;
+        }
+        else
+        {
+            return (weight * pricePerPound) * 0.03;
+        }
+    }
+
+    static string GetDeliveryLabel(int weight)
+    {
+        if (weight > 4800)
+        {
+            return "(free delivery)";
+        }
+        else
+        {
+            return string.Empty;
         }
     }
 }
